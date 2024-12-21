@@ -1,8 +1,8 @@
 import { Router, Request, Response } from "express";
-import { getUsers } from "../src/getActivitiesList";
-import {getGoalsList} from '../src/getGoalsList'
-import {createNewLogEntry } from "../src/createNewLogEntry";
-
+import { getActivities } from "../src/getActivitiesList";
+import { getGoalsList } from "../src/getGoalsList";
+import { createNewLogEntry } from "../src/createNewLogEntry";
+import { getLog } from "../src/getLog";
 
 const router: Router = Router();
 
@@ -11,9 +11,18 @@ router.get("/", (req: Request, res: Response) => {
 });
 
 router.get("/activities", (req: Request, res: Response) => {
-  getUsers(process.env.NOTION_TOKEN || "", process.env.ACTIVITES_DB || "").then(
+  getActivities(
+    process.env.NOTION_TOKEN || "",
+    process.env.ACTIVITES_DB || ""
+  ).then((data) => {
+    res.send(data);
+  });
+});
+
+router.get("/log", (req: Request, res: Response) => {
+  getLog(process.env.NOTION_TOKEN || "", process.env.LOG_DB || "", "", "").then(
     (data) => {
-      res.send(data?.results);
+      res.send(data);
     }
   );
 });
@@ -26,13 +35,13 @@ router.get("/goals", (req: Request, res: Response) => {
   );
 });
 
-
 router.get("/createNewLogEntry", (req: Request, res: Response) => {
-  createNewLogEntry(process.env.NOTION_TOKEN || "", process.env.ACTIVITES_DB || "").then(
-    (data) => {
-      res.send("success");
-    }
-  );
+  createNewLogEntry(
+    process.env.NOTION_TOKEN || "",
+    process.env.ACTIVITES_DB || ""
+  ).then((data) => {
+    res.send("success");
+  });
 });
 router.get("/users/:userId", (req: Request, res: Response) => {
   const userId = req.params.userId;
